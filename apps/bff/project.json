@@ -1,7 +1,7 @@
 {
-  "name": "property-finder",
+  "name": "bff",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/property-finder/src",
+  "sourceRoot": "apps/bff/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -11,12 +11,12 @@
       "options": {
         "target": "node",
         "compiler": "tsc",
-        "outputPath": "dist/apps/property-finder",
-        "main": "apps/property-finder/src/main.ts",
-        "tsConfig": "apps/property-finder/tsconfig.app.json",
-        "assets": ["apps/property-finder/src/assets"],
+        "outputPath": "dist/apps/bff",
+        "main": "apps/bff/src/main.ts",
+        "tsConfig": "apps/bff/tsconfig.app.json",
+        "assets": ["apps/bff/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/property-finder/webpack.config.js"
+        "webpackConfig": "apps/bff/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -27,14 +27,14 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "property-finder:build"
+        "buildTarget": "bff:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "property-finder:build:development"
+          "buildTarget": "bff:build:development"
         },
         "production": {
-          "buildTarget": "property-finder:build:production"
+          "buildTarget": "bff:build:production"
         }
       }
     },
@@ -42,14 +42,14 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/property-finder/**/*.ts"]
+        "lintFilePatterns": ["apps/bff/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/property-finder/jest.config.ts",
+        "jestConfig": "apps/bff/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
