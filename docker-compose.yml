@@ -77,4 +77,3 @@ services:
 volumes:
   mongodb_master_data:
     driver: local
-
