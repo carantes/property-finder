@@ -1,0 +1,79 @@
+version: '3.1'
+
+services:
+  bff:
+    build:
+      context: .
+      dockerfile: ./apps/bff/Dockerfile
+      target: development
+    command: npx nx serve bff
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - users
+      - properties
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+      target: development
+    command: npx nx serve user-service
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
+
+  properties:
+    build:
+      context: .
+      dockerfile: ./apps/property-service/Dockerfile
+      target: development
+    command: npx nx serve property-service
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
+
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root123
+    volumes:
+      - 'mongodb_master_data:/mongodb'
+    ports:
+      - '27017:27017'
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root123
+      ME_CONFIG_MONGODB_URL: mongodb://root:root123@mongodb:27017/
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_master_data:
+    driver: local

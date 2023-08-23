@@ -10,19 +10,22 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const port = process.env.USER_SERVICE_PORT || 3000;
+  const { USER_SERVICE_PORT, USER_SERVICE_TCP_HOST, USER_SERVICE_TCP_PORT } =
+    process.env;
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
-      host: '0.0.0.0',
-      port,
+      host: USER_SERVICE_TCP_HOST,
+      port: USER_SERVICE_TCP_PORT,
     },
   });
 
   await app.startAllMicroservices();
-  await app.listen(port);
-  Logger.log(`🚀 User-service is running on: http://localhost:${port}`);
+  await app.listen(USER_SERVICE_PORT);
+  Logger.log(
+    `🚀 User-service is running on: http://localhost:${USER_SERVICE_PORT}`
+  );
 }
 
 bootstrap();
