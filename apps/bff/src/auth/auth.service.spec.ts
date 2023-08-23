@@ -1,18 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { ClientProxy } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
-  let service: AuthService;
+  let client: ClientProxy;
+  let authService: AuthService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
-    }).compile();
-
-    service = module.get<AuthService>(AuthService);
+    authService = new AuthService(client);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 });
