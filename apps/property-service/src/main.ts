@@ -10,19 +10,25 @@ import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const port = Number.parseInt(process.env.PROPERTY_SERVICE_PORT || '3000');
+  const {
+    PROPERTY_SERVICE_PORT,
+    PROPERTY_SERVICE_TCP_HOST,
+    PROPERTY_SERVICE_TCP_PORT,
+  } = process.env;
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
-      host: '0.0.0.0',
-      port,
+      host: PROPERTY_SERVICE_TCP_HOST,
+      port: PROPERTY_SERVICE_TCP_PORT,
     },
   });
 
   await app.startAllMicroservices();
-  await app.listen(port);
-  Logger.log(`🚀 Property service is running on: http://localhost:${port}`);
+  await app.listen(PROPERTY_SERVICE_PORT);
+  Logger.log(
+    `🚀 Property service is running on: http://localhost:${PROPERTY_SERVICE_PORT}`
+  );
 }
 
 bootstrap();

@@ -89,10 +89,24 @@ TBD
 - Create a new `.env` file in the root folder.
 
 ```
+# Server config
+
+## Http server port
 BFF_PORT=3000
 USER_SERVICE_PORT=3001
+
+## TCP server host/port
+USER_SERVICE_TCP_HOST=users # localhost or container name from docker
+USER_SERVICE_TCP_PORT=3101
 PROPERTY_SERVICE_PORT=3002
+PROPERTY_SERVICE_TCP_HOST=properties # localhost or container name from docker
+PROPERTY_SERVICE_TCP_PORT=3102
+
 DEFAULT_TIMEOUT=5000
+
+# Database
+MONGODB_URI=mongodb://root:root123@mongodb:27017/
+
 ```
 
 ### Start the app
