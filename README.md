@@ -35,13 +35,13 @@ Building blocks:
 
 ### API Design
 
-#### Public endpoints
-
 | Method | Endpoint                                | Description                                  | Return                                 |
 | ------ | --------------------------------------- | -------------------------------------------- | -------------------------------------- |
 | POST   | /api/v1/auth/login                      | Authenticate the user and return a JWT token | 200 (success), 401 (unauthorized)      |
 | GET    | /api/v1/auth/profile                    | Get authenticated user profile               | 200 (Success)                          |
 | POST   | /api/v1/auth/profile                    | Update user profile                          | 200 (Sucess), 4xx (Validation error)   |
+| POST   | /api/v1/accounts/register               | Register a new user to the app               | 200 (success), 4xx (Validation error)  |
+| POST   | /api/v1/accounts/forgot-password        | Reset user password                          | 200 (success), 4xx (Validation error)  |
 | GET    | /api/v1/properties                      | List all of properties from the current user | 200 (Success)                          |
 | GET    | /api/v1/properties/`<id>`               | Return details from a single property        | 200 (Success), 404 (Not found)         |
 | POST   | /api/v1/properties                      | Create a new property                        | 201 (Inserted), 4xx (Validation error) |
@@ -49,30 +49,11 @@ Building blocks:
 | DELETE | /api/v1/properties/`<id>`               | Delete one existing property                 | 200 (Success), 404 (Not found)         |
 | GET    | /api/v1/properties/search?q=`<keyword>` | Full-text search on indexed properties       | 200 (Success)                          |
 
-#### Internal
-
-| Method | Endpoint      | Description                       | Return                                 |
-| ------ | ------------- | --------------------------------- | -------------------------------------- |
-| POST   | /users        | Create a new user                 | 201 (Inserted), 4xx (Validation error) |
-| GET    | /users        | List all users                    | 200 (Success)                          |
-| GET    | /users/`<id>` | Return details from a single user | 200 (Success), 404 (Not found)         |
-| PUT    | /users/`<id>` | Update one existing user          | 200 (Success), 404 (Not found)         |
-| DELETE | /users/`<id>` | Delete one existing user          | 200 (Success), 404 (Not found)         |
-
-| Method | Endpoint                         | Description                            | Return                                 |
-| ------ | -------------------------------- | -------------------------------------- | -------------------------------------- |
-| POST   | /properties                      | Create a new property                  | 201 (Inserted), 4xx (Validation error) |
-| GET    | /properties                      | List all of properties                 | 200 (Success)                          |
-| GET    | /properties/`<id>`               | Return details from a single property  | 200 (Success), 404 (Not found)         |
-| PUT    | /properties/`<id>`               | Update one existing property           | 200 (Success), 404 (Not found)         |
-| DELETE | /properties/`<id>`               | Delete one existing property           | 200 (Success), 404 (Not found)         |
-| GET    | /properties/search?q=`<keyword>` | Full-text search on indexed properties | 200 (Success)                          |
-
 ### Communication Patterns
 
-- REST HTTP: Standard client x Server communication
-- TCP/gRPC: Synchronous communication from BFF to internal services (like user-service, property-service)
-- AMQP: Asynchronous communication used by queue consumers
+- HTTP Rest: Standard client x Server communication
+- TCP/gRPC: Synchronous communication from Gateway to internal services
+- AMQP: Asynchronous communication used by queue producers/consumers
 
 ### Database Schema
 
