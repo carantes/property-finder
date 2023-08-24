@@ -1,17 +1,17 @@
 version: '3.1'
 
 services:
-  bff:
+  gateway:
     build:
       context: .
-      dockerfile: ./apps/bff/Dockerfile
+      dockerfile: ./apps/services/gateway/Dockerfile
       target: development
-    command: npx nx serve bff
+    command: npx nx serve gateway
     env_file:
       - .env
     depends_on:
       - mongodb
-      - users
+      - identity
       - properties
     volumes:
       - .:/usr/src/app
@@ -19,12 +19,12 @@ services:
     ports:
       - '3000:3000'
 
-  users:
+  identity:
     build:
       context: .
-      dockerfile: ./apps/user-service/Dockerfile
+      dockerfile: ./apps/services/identity/Dockerfile
       target: development
-    command: npx nx serve user-service
+    command: npx nx serve identity
     env_file:
       - .env
     depends_on:
@@ -38,9 +38,9 @@ services:
   properties:
     build:
       context: .
-      dockerfile: ./apps/property-service/Dockerfile
+      dockerfile: ./apps/services/property/Dockerfile
       target: development
-    command: npx nx serve property-service
+    command: npx nx serve property
     env_file:
       - .env
     depends_on:
