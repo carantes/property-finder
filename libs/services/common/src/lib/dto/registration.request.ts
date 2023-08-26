@@ -4,8 +4,9 @@ import { IsDefined, IsEmail, IsNotEmpty } from 'class-validator';
 export class RegistrationRequest {
   @IsDefined()
   @IsNotEmpty()
+  @IsEmail()
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
-  public username: string;
+  public email: string;
 
   @IsDefined()
   @IsNotEmpty()
@@ -19,10 +20,4 @@ export class RegistrationRequest {
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
   public name: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEmail()
-  @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
-  public email: string;
 }

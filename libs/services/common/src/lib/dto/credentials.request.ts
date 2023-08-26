@@ -1,11 +1,12 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsDefined, IsNotEmpty } from 'class-validator';
+import { IsDefined, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CredentialsRequest {
   @IsDefined()
   @IsNotEmpty()
+  @IsEmail()
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
-  public username: string;
+  public email: string;
 
   @IsDefined()
   @IsNotEmpty()
