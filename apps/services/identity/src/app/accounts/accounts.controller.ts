@@ -15,15 +15,15 @@ export class AccountsController {
   @MessagePattern(registerAccountCommand)
   public async registerAccount(
     registration: RegistrationRequest
-  ): Promise<UserDto | null> {
+  ): Promise<UserDto> {
     try {
-      const result = await this.accountsService.register(registration);
+      const account = await this.accountsService.register(registration);
 
-      if (!result) {
+      if (!account) {
         throw new BadRequestException('Failed to create user account');
       }
 
-      return result;
+      return new UserDto(account);
     } catch (error) {
       console.log(error);
       throw error;
