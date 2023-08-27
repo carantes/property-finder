@@ -11,4 +11,9 @@ export class CredentialsRequest {
   @IsDefined()
   @IsNotEmpty()
   public password: string;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(args: any) {
+    Object.assign(this, args);
+  }
 }

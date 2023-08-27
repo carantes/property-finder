@@ -4,7 +4,10 @@ import {
   TcpClientOptions,
   Transport,
 } from '@nestjs/microservices';
-import { IDENTITY_SERVICE_TOKEN } from '@property-finder/services/common';
+import {
+  IDENTITY_SERVICE_TOKEN,
+  PROPERTY_SERVICE_TOKEN,
+} from '@property-finder/services/common';
 
 export const identityServiceProvider = {
   provide: IDENTITY_SERVICE_TOKEN,
@@ -13,6 +16,20 @@ export const identityServiceProvider = {
       options: {
         port: configService.get('IDENTITY_SERVICE_PORT'),
         host: configService.get('IDENTITY_SERVICE_HOST'),
+      },
+      transport: Transport.TCP,
+    } as TcpClientOptions);
+  },
+  inject: [ConfigService],
+};
+
+export const propertyServiceProvider = {
+  provide: PROPERTY_SERVICE_TOKEN,
+  useFactory: (configService: ConfigService) => {
+    return ClientProxyFactory.create({
+      options: {
+        port: configService.get('PROPERTY_SERVICE_PORT'),
+        host: configService.get('PROPERTY_SERVICE_HOST'),
       },
       transport: Transport.TCP,
     } as TcpClientOptions);

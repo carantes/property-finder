@@ -10,7 +10,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import {
   IDENTITY_SERVICE_TOKEN,
   RegistrationRequest,
-  UserDto,
+  UserAccountDto,
   registerAccountCommand,
 } from '@property-finder/services/common';
 import { Observable, catchError, throwError } from 'rxjs';
@@ -25,7 +25,7 @@ export class AccountsController {
   @HttpCode(HttpStatus.OK)
   public registerAccount(
     @Body() registration: RegistrationRequest
-  ): Observable<UserDto> {
+  ): Observable<UserAccountDto> {
     return this.identityServiceClient
       .send(registerAccountCommand, registration)
       .pipe(

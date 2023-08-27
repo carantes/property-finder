@@ -3,7 +3,7 @@ import { BaseDocument } from '@property-finder/services/common';
 
 @Schema()
 export class Account extends BaseDocument {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true, index: true })
   email: string;
 
   @Prop({ required: true })
@@ -11,6 +11,10 @@ export class Account extends BaseDocument {
 
   @Prop()
   name: string;
+
+  //TODO
+  // isEmailConfirmed
+  // isLockedOut
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

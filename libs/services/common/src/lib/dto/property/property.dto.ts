@@ -1,8 +1,7 @@
-import { BaseDto } from './base.dto';
+import { BaseDto } from '../base.dto';
 
-export class UserDto extends BaseDto {
+export class PropertyDto extends BaseDto {
   public name: string;
-  public email: string;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(args: any) {
@@ -12,7 +11,6 @@ export class UserDto extends BaseDto {
       createdAt: args?._createdAt,
       updatedAt: args?._updatedAt,
       name: args?.name,
-      email: args?.email,
-    } satisfies UserDto);
+    } satisfies PropertyDto);
   }
 }

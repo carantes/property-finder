@@ -10,6 +10,11 @@ import { TcpOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const { PROPERTY_SERVICE_HOST, PROPERTY_SERVICE_PORT } = process.env;
+  console.log(
+    'property service envs',
+    PROPERTY_SERVICE_HOST,
+    PROPERTY_SERVICE_PORT
+  );
   const app = await NestFactory.createMicroservice(PropertyModule, {
     transport: Transport.TCP,
     options: {

@@ -1,46 +1,50 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
+  AccessTokenPayload,
   AuthTokenPair,
   CredentialsRequest,
   HashingUtils,
+  UserAccountDto,
+  UserAccountDetailsDto,
 } from '@property-finder/services/common';
 import { AccountsService } from '../accounts/accounts.service';
-import { Account } from '../accounts/accounts.schema';
+import { TokensService } from './tokens.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly tokensService: TokensService
+  ) {}
 
-  public async signIn(credentials: CredentialsRequest): Promise<AuthTokenPair> {
-    const account = await this.validateCredentials(credentials);
-
-    if (!account) {
-      throw new UnauthorizedException('Credentials are not valid');
-    }
-
-    return {
-      accessToken: '1234',
-      refreshToken: '1234',
+  public async signIn(userAccount: UserAccountDto): Promise<AuthTokenPair> {
+    const tokenPayload: AccessTokenPayload = {
+      userId: userAccount.id,
     };
+
+    return this.tokensService.signToken(tokenPayload);
   }
 
-  private async validateCredentials(
+  public async validateUser(
     credentials: CredentialsRequest
-  ): Promise<Account | null> {
-    const account = await this.accountsService.findUserAccount(
-      credentials.email
-    );
+  ): Promise<UserAccountDto | null> {
+    const account: UserAccountDetailsDto =
+      await this.accountsService.findUserAccountDetails(credentials.email);
 
-    // User email is invalid
-    if (!account) {
-      return null;
-    }
+    // Account does not exist
+    if (!account) return null;
 
     // Password is invalid
     if (!HashingUtils.compare(credentials.password, account.password)) {
       return null;
     }
 
-    return account;
+    return new UserAccountDto({
+      _id: account.id,
+      _createdAt: account.createdAt,
+      _updatedAt: account.updatedAt,
+      name: account.name,
+      email: account.email,
+    });
   }
 }

@@ -4,6 +4,8 @@ import {
   AuthTokenPair,
   signInCommand,
   CredentialsRequest,
+  validateCredentialsCommand,
+  UserAccountDto,
 } from '@property-finder/services/common';
 import { AuthService } from './auth.service';
 
@@ -11,10 +13,24 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @MessagePattern(signInCommand)
-  public async signIn(credentials: CredentialsRequest): Promise<AuthTokenPair> {
+  // Called by the Passport local strategy decorator
+  @MessagePattern(validateCredentialsCommand)
+  public async validateUserCredentials(
+    credentials: CredentialsRequest
+  ): Promise<UserAccountDto> {
     try {
-      return await this.authService.signIn(credentials);
+      return await this.authService.validateUser(credentials);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  // User credentials is already validated at this point
+  @MessagePattern(signInCommand)
+  public async signIn(userAccount: UserAccountDto): Promise<AuthTokenPair> {
+    try {
+      return await this.authService.signIn(userAccount);
     } catch (error) {
       console.log(error);
       throw error;

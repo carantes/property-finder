@@ -4,7 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import {
   registerAccountCommand,
   RegistrationRequest,
-  UserDto,
+  UserAccountDto,
 } from '@property-finder/services/common';
 import { AccountsService } from './accounts.service';
 
@@ -15,15 +15,17 @@ export class AccountsController {
   @MessagePattern(registerAccountCommand)
   public async registerAccount(
     registration: RegistrationRequest
-  ): Promise<UserDto> {
+  ): Promise<UserAccountDto> {
     try {
-      const account = await this.accountsService.register(registration);
+      const account: UserAccountDto = await this.accountsService.register(
+        registration
+      );
 
       if (!account) {
         throw new BadRequestException('Failed to create user account');
       }
 
-      return new UserDto(account);
+      return account;
     } catch (error) {
       console.log(error);
       throw error;

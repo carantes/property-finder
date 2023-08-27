@@ -6,16 +6,19 @@ This is an educational side project where I am trying to replicate a real world 
 
 ### Functional Requirements
 
-- Sellers can add new apartments to the listing
+- Users can register to create new accounts and use the system
+- Users can authenticate in the app using JWT strategy
+- Authenticated Sellers can add new properties to the listing
 - Buyers can search for existing apartments using plain text or keywords
-- Buyers should be able to create monitors to specific search keywords
+- Authenticated Buyers can create monitors to specific search keywords
 - Buyers should be notified about new properties every 24hs and should never be notified twice about the same property.
 
 ### Non-Functional
 
+- User authentication should be safe and reliable
 - Low latency on search results
 - Eventual consistency of new apartments on search results
-- General High availability and scalability
+- General high availability and scalability
 
 ## System Design
 
