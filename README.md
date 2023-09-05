@@ -6,16 +6,19 @@ This is an educational side project where I am trying to replicate a real world 
 
 ### Functional Requirements
 
-- Sellers can add new apartments to the listing
+- Users can register to create new accounts and use the system
+- Users can authenticate in the app using JWT strategy
+- Authenticated Sellers can add new properties to the listing
 - Buyers can search for existing apartments using plain text or keywords
-- Buyers should be able to create monitors to specific search keywords
+- Authenticated Buyers can create monitors to specific search keywords
 - Buyers should be notified about new properties every 24hs and should never be notified twice about the same property.
 
 ### Non-Functional
 
+- User authentication should be safe and reliable
 - Low latency on search results
 - Eventual consistency of new apartments on search results
-- General High availability and scalability
+- General high availability and scalability
 
 ## System Design
 
@@ -33,23 +36,32 @@ This is an educational side project where I am trying to replicate a real world 
 
 ### API Design
 
-| Method | Endpoint                                | Description                                  | Return                                 |
-| ------ | --------------------------------------- | -------------------------------------------- | -------------------------------------- |
-| POST   | /api/v1/auth/login                      | Authenticate the user and return a JWT token | 200 (success), 401 (unauthorized)      |
-| GET    | /api/v1/auth/profile                    | Get authenticated user profile               | 200 (Success)                          |
-| POST   | /api/v1/auth/profile                    | Update user profile                          | 200 (Sucess), 4xx (Validation error)   |
-| POST   | /api/v1/accounts/register               | Register a new user to the app               | 200 (success), 4xx (Validation error)  |
-| POST   | /api/v1/accounts/forgot-password        | Reset user password                          | 200 (success), 4xx (Validation error)  |
-| GET    | /api/v1/properties                      | List all of properties from the current user | 200 (Success)                          |
-| GET    | /api/v1/properties/`<id>`               | Return details from a single property        | 200 (Success), 404 (Not found)         |
-| POST   | /api/v1/properties                      | Create a new property                        | 201 (Inserted), 4xx (Validation error) |
-| PUT    | /api/v1/properties/`<id>`               | Update one existing property                 | 200 (Success), 404 (Not found)         |
-| DELETE | /api/v1/properties/`<id>`               | Delete one existing property                 | 200 (Success), 404 (Not found)         |
-| GET    | /api/v1/properties/search?q=`<keyword>` | Full-text search on indexed properties       | 200 (Success)                          |
+| Method | Endpoint                                | Access    | Description                                                | Return   |
+| ------ | --------------------------------------- | --------- | ---------------------------------------------------------- | -------- |
+| POST   | /api/v1/accounts/register               | Public    | Register a new user account in the app                     | 200, 4xx |
+| POST   | /api/v1/auth/login                      | Public    | Authenticate the user, create cookies and return user info | 200, 401 |
+| GET    | /api/v1/auth/me                         | Protected | Validate session and get user info                         | 200, 401 |
+| POST   | /api/v1/auth/logout                     | Protected | Logout existing the user, remove cookies                   | 200, 401 |
+| POST   | /api/v1/properties                      | Protected | Create a new property                                      | 201, 4xx |
+| GET    | /api/v1/properties/`<id>`               | Protected | Return details from a single property                      | 200, 404 |
+| PUT    | /api/v1/properties/`<id>`               | Protected | Update one existing property                               | 200, 404 |
+| DELETE | /api/v1/properties/`<id>`               | Protected | Delete one existing property                               | 200, 404 |
+| GET    | /api/v1/properties/search?q=`<keyword>` | Protected | Full-text search on indexed properties                     | 200      |
 
 ### Database Schema
 
-TBD
+![Alt text](db-model.png)
+
+### User Authentication Flow
+
+![Alt text](auth-flow.png)
+
+#### Use cases
+
+1. User Sign-in in the app
+2. Authenticated user perform an API call to protected resources using a valid access token
+3. Authenticated user perform an API call to protected resources using an expired/invalid access token
+4. Authenticated user perform an API call with both Access and Refresh Token expired
 
 ## Implementation details
 

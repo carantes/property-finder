@@ -1,22 +1,32 @@
 import { Module } from '@nestjs/common';
-import { AccountsController } from './accounts/accounts.controller';
-import { AuthController } from './auth/auth.controller';
-import { AccountsService } from './accounts/accounts.service';
-import { ConfigModule } from '@nestjs/config';
-import { AuthService } from './auth/auth.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Account, AccountSchema } from './accounts/accounts.schema';
-import { AccountsRepository } from './accounts/accounts.repository';
+import { RedisModule } from '@songkeys/nestjs-redis';
+
+import { V1Module } from './modules/v1/v1.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://root:root123@mongodb:27017', {
-      dbName: 'accounts',
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get('MONGODB_URI'),
+        dbName: configService.get('MONGODB_DBNAME'),
+      }),
+      inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
+    RedisModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        config: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    V1Module,
   ],
-  controllers: [AccountsController, AuthController],
-  providers: [AccountsService, AccountsRepository, AuthService],
+  providers: [],
 })
 export class IdentityModule {}
