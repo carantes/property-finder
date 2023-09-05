@@ -15,7 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@property-finder/services/common": ["libs/services/common/src/index.ts"]
+      "@property-finder/services/contracts": [
+        "libs/services/contracts/src/index.ts"
+      ],
+      "@property-finder/services/repositories": [
+        "libs/services/repositories/src/index.ts"
+      ],
+      "@property-finder/services/utils": ["libs/services/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -12,7 +12,7 @@ services:
     depends_on:
       - mongodb
       - identity
-      - properties
+      # - properties
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -35,36 +35,36 @@ services:
     ports:
       - '3001:3001'
 
-  properties:
-    build:
-      context: .
-      dockerfile: ./apps/services/property/Dockerfile
-      target: development
-    command: npx nx serve property
-    env_file:
-      - .env
-    depends_on:
-      - mongodb
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - '3002:3002'
+  # properties:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/services/property/Dockerfile
+  #     target: development
+  #   command: npx nx serve property
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - mongodb
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - '3002:3002'
 
   mongodb:
     image: mongo
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root123
     volumes:
-      - 'mongodb_master_data:/mongodb'
+      - 'mongodb_volume:/mongodb'
     ports:
       - '27017:27017'
 
   mongo-express:
     image: mongo-express
-    restart: always
+    restart: unless-stopped
     ports:
       - 8081:8081
     environment:
@@ -74,6 +74,29 @@ services:
     depends_on:
       - mongodb
 
+  redis-main:
+    container_name: redis-nest
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis-volume:/data/redis
+
+  redis-commander:
+    container_name: redis-commander-nest
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis-main:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=qwerty
+    ports:
+      - 8082:8081
+    depends_on:
+      - redis-main
+
 volumes:
-  mongodb_master_data:
-    driver: local
+  mongodb_volume:
+  redis-volume:

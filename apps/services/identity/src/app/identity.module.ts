@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RedisModule } from '@songkeys/nestjs-redis';
 
-import { AccountsModule } from './accounts/accounts.module';
-import { AuthModule } from './auth/auth.module';
+import { V1Module } from './modules/v1/v1.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -16,8 +16,17 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
-    AccountsModule,
-    AuthModule,
+    RedisModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        config: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    V1Module,
   ],
+  providers: [],
 })
 export class IdentityModule {}

@@ -1,24 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
-import { AccountsController } from './controllers/accounts.controller';
-import { AuthController } from './controllers/auth.controller';
-import { PropertiesController } from './controllers/properties.controller';
-import {
-  identityServiceProvider,
-  propertyServiceProvider,
-} from './gateway.providers';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { V1Module } from './modules/v1/v1.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PassportModule],
-  controllers: [AccountsController, AuthController, PropertiesController],
-  providers: [
-    identityServiceProvider,
-    propertyServiceProvider,
-    LocalStrategy,
-    JwtStrategy,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), V1Module],
+  providers: [],
 })
 export class GatewayModule {}

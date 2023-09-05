@@ -10,11 +10,6 @@ import { TcpOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const { IDENTITY_SERVICE_HOST, IDENTITY_SERVICE_PORT } = process.env;
-  console.log(
-    'identity service envs',
-    IDENTITY_SERVICE_HOST,
-    IDENTITY_SERVICE_PORT
-  );
   const app = await NestFactory.createMicroservice(IdentityModule, {
     transport: Transport.TCP,
     options: {
