@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
 import { UserDto } from './dto/user.dto';
 
-type FindOneKeyType = 'id' | 'email';
+type FindOneKeyType = '_id' | 'email';
 
 interface IUsersService {
   create(account: CreateUserDto): Promise<UserDto>;

@@ -49,11 +49,6 @@ export class AuthController {
     return this.identityServiceClient
       .send<AuthenticatedUserDto>(signInCommand, credentials)
       .pipe(
-        catchError((error) => {
-          return throwError(() => new RpcException(error.response));
-        })
-      )
-      .pipe(
         tap(({ tokens }) => {
           this.cookieService.setCookie('access_token', tokens.accessToken, res);
           this.cookieService.setCookie(
@@ -61,6 +56,9 @@ export class AuthController {
             tokens.refreshToken,
             res
           );
+        }),
+        catchError((error) => {
+          return throwError(() => new RpcException(error.response));
         })
       )
       .pipe(map(({ userInfo }) => userInfo));
@@ -84,18 +82,18 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  public logout(@Res({ passthrough: true }) res: Response): Observable<void> {
+  public logout(@Res({ passthrough: true }) res: Response): Observable<any> {
+    const refreshToken = this.cookieService.getCookie('refresh_token', res.req);
     return this.identityServiceClient
-      .send(logoutCommand, {})
+      .send<string, string>(logoutCommand, refreshToken)
       .pipe(
         catchError((error) => {
           return throwError(() => new RpcException(error.response));
-        })
-      )
-      .pipe(
+        }),
         tap(() => {
           this.cookieService.clearAllCookies(res);
         })
-      );
+      )
+      .pipe(map(() => ({})));
   }
 }

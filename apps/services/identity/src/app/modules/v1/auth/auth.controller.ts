@@ -10,7 +10,7 @@ import {
   getProfileCommand,
   refreshTokenCommand,
   AccountDetailsDto,
-  // logoutCommand,
+  logoutCommand,
 } from '@property-finder/services/contracts';
 import { UsersService } from '../users/users.service';
 
@@ -40,7 +40,7 @@ export class AuthController {
     try {
       this.logger.debug('Get user info', userId);
       return new AccountDetailsDto(
-        await this.userService.findOne('id', userId)
+        await this.userService.findOne('_id', userId)
       );
     } catch (error) {
       this.logger.error('Failed get user profile', error);
@@ -60,13 +60,14 @@ export class AuthController {
     }
   }
 
-  // @MessagePattern(logoutCommand)
-  // public async logout(): Promise<null> {
-  //   try {
-  //     return await this.authService.logout();
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw new RpcException(error);
-  //   }
-  // }
+  @MessagePattern(logoutCommand)
+  public async logout(@Payload() token: string): Promise<string> {
+    try {
+      await this.authService.logout(token);
+      return 'OK'; // prevent empty observables
+    } catch (error) {
+      console.log(error);
+      throw new RpcException(error);
+    }
+  }
 }

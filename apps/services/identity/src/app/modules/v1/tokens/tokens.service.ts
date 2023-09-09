@@ -12,6 +12,7 @@ import { TokensRepository } from './tokens.repository';
 interface ITokensService {
   signInTokens(payload: AccessTokenPayload): Promise<AuthTokenPair>;
   refreshTokens(refreshToken: string): Promise<AuthenticatedUserDto>;
+  deleteToken(refreshToken: string): Promise<number>;
 }
 
 @Injectable()
@@ -31,9 +32,8 @@ export class TokensService implements ITokensService {
       this.generateRefreshToken(payload, jwtid),
     ]);
 
+    //TODO: Revoke old refresh token keys before add a new one
     this.tokensRepository.setRefreshToken(payload.userId, jwtid);
-
-    //TODO: Persist access token on redis service
 
     return {
       accessToken,
@@ -44,20 +44,20 @@ export class TokensService implements ITokensService {
   public async refreshTokens(
     refreshToken: string
   ): Promise<AuthenticatedUserDto> {
-    const verifiedJWt = await this.jwtService.verifyAsync(refreshToken, {
+    const verifiedJwt = await this.jwtService.verifyAsync(refreshToken, {
       secret: this.configService.get<string>('REFRESH_TOKEN_JWT_SECRET'),
     });
 
-    if (!verifiedJWt) {
+    if (!verifiedJwt) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const { userId, displayName, jwtid } = verifiedJWt;
+    const { userId, displayName, jti } = verifiedJwt;
 
     // Verify token on redis service
-    const refreshTokenRedis = this.tokensRepository.getRefreshToken(
+    const refreshTokenRedis = await this.tokensRepository.getRefreshToken(
       userId,
-      jwtid
+      jti
     );
 
     if (!refreshTokenRedis) {
@@ -75,6 +75,20 @@ export class TokensService implements ITokensService {
       },
       tokens: { accessToken, refreshToken },
     };
+  }
+
+  public async deleteToken(refreshToken: string): Promise<number> {
+    const verifiedJwt = await this.jwtService.verifyAsync(refreshToken, {
+      secret: this.configService.get<string>('REFRESH_TOKEN_JWT_SECRET'),
+    });
+
+    if (!verifiedJwt) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const { userId, jti } = verifiedJwt;
+
+    return this.tokensRepository.removeRefreshToken(userId, jti);
   }
 
   private async generateAccessToken(payload: AccessTokenPayload) {
