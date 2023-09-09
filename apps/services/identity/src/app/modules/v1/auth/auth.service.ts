@@ -12,7 +12,7 @@ import { TokensService } from '../tokens/tokens.service';
 export interface IAuthService {
   signIn(credentials: UserCredentialsDto): Promise<AuthenticatedUserDto>;
   refreshToken(token: string): Promise<AuthenticatedUserDto>;
-  // logout(): Promise<null>;
+  logout(token: string): Promise<void>;
 }
 
 @Injectable()
@@ -74,6 +74,15 @@ export class AuthService implements IAuthService {
       return this.tokensService.refreshTokens(token);
     } catch (error) {
       throw new UnauthorizedException('Failed to refresh access token');
+    }
+  }
+
+  public async logout(token: string): Promise<void> {
+    try {
+      this.logger.debug('Cleanup token from storage');
+      await this.tokensService.deleteToken(token);
+    } catch (error) {
+      throw new UnauthorizedException('Failed to logout user');
     }
   }
 }

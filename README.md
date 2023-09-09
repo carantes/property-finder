@@ -20,7 +20,7 @@ This is an educational side project where I am trying to replicate a real world 
 - Eventual consistency of new apartments on search results
 - General high availability and scalability
 
-## System Design
+## High-Level System Design
 
 ![Alt text](system-design.png)
 
@@ -68,6 +68,11 @@ This is an educational side project where I am trying to replicate a real world 
 ### The Monorepo
 
 ### CI & CD
+
+I am using Github Actions with a standard pipeline definition for NX monorepos.
+Only CI for now but I have plans to setup the CD at some point to deploy the app to staging and run E2E tests.
+
+![Alt text](ci-cd-pipeline.png)
 
 ### Backend
 

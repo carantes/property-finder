@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { RedisService } from '@songkeys/nestjs-redis';
 
 @Injectable()
 export class TokensRepository {
-  constructor(private readonly redisService: RedisService) {}
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService
+  ) {}
 
   public async setRefreshToken(userId: string, jwtId: string) {
-    return await this.redisService
-      .getClient()
-      .set(`refresh-token:${userId}:${jwtId}`, userId, 'EX', 60 * 60 * 24 * 30);
+    return await this.redisService.getClient().set(
+      `refresh-token:${userId}:${jwtId}`,
+      userId,
+      'EX',
+      this.configService.get('REFRESH_TOKEN_REDIS_EXP_IN_SEC') // 30 days
+    );
   }
 
   public async removeRefreshToken(userId: string, jwtId: string) {
