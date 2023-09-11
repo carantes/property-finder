@@ -24,7 +24,7 @@ export function IsEqualToProp(
           return (
             typeof value === 'string' &&
             typeof relatedValue === 'string' &&
-            value.length === relatedValue.length
+            value === relatedValue
           );
         },
       },
